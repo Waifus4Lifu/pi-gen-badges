@@ -4,6 +4,7 @@ pip3 install beacontools[scan]
 pip3 install evdev
 pip3 install RPi.GPIO
 pip3 install pyyaml
+pip3 install pygame
 EOF
 
 # Create badge directory with the important, static files
