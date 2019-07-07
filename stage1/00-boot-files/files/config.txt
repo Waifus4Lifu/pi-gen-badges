@@ -7,7 +7,7 @@
 
 # uncomment this if your display has a black border of unused pixels visible
 # and your display can output without overscan
-#disable_overscan=1
+disable_overscan=1
 
 # uncomment the following to adjust overscan. Use positive numbers if console
 # goes off screen, and negative if there is too much border
@@ -43,9 +43,9 @@
 #arm_freq=800
 
 # Uncomment some or all of these to enable the optional hardware interfaces
-#dtparam=i2c_arm=on
+dtparam=i2c_arm=on
 #dtparam=i2s=on
-#dtparam=spi=on
+dtparam=spi=on
 
 # Uncomment this to enable the lirc-rpi module
 #dtoverlay=lirc-rpi
@@ -54,6 +54,32 @@
 
 # Enable audio (loads snd_bcm2835)
 dtparam=audio=on
+
+dtoverlay=ads7846,penirq=27,swapxy=1,xmin=200,xmax=3850,ymin=200,ymax=3850
+display_rotate=3
+dtoverlay=mzdpi
+dtoverlay=dwc2
+
+overscan_left=0
+overscan_right=0
+overscan_top=0
+overscan_bottom=0
+framebuffer_width=640
+framebuffer_height=480
+
+enable_dpi_lcd=1
+display_default_lcd=1
+
+dpi_group=2
+dpi_mode=87
+
+dpi_output_format=0x07f003
+
+hdmi_timings=488 0 228 8 1 640 0 4 2 1 0 0 0 60 0 32000000 3
+gpu_mem_256=128
+gpu_mem_512=256
+gpu_mem_1024=256
+overscan_scale=1
 
 [pi4]
 # Enable DRM VC4 V3D driver on top of the dispmanx display stack
