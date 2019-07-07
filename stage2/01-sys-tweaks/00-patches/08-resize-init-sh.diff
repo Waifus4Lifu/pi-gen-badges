@@ -1,0 +1,10 @@
+--- a/rootfs/usr/lib/raspi-config/init_resize.sh
++++ b/rootfs/usr/lib/raspi-config/init_resize.sh
+@@ -56,7 +56,7 @@
+   check_noobs
+
+   ROOT_DEV_SIZE=$(cat "/sys/block/${ROOT_DEV_NAME}/size")
+-  TARGET_END=$((ROOT_DEV_SIZE - 1))
++  TARGET_END=6291456
+
+   PARTITION_TABLE=$(parted -m "$ROOT_DEV" unit s print | tr -d 's')

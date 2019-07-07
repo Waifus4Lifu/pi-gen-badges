@@ -1,0 +1,53 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          create_vfat_once
+# Required-Start:
+# Required-Stop:
+# Default-Start: 3
+# Default-Stop:
+# Short-Description: Create a vfat partition to fill the remaining space
+# Description:
+### END INIT INFO
+. /lib/lsb/init-functions
+
+get_variables () {
+    ROOT_PART_DEV=$(findmnt / -o source -n)
+    ROOT_PART_NAME=$(echo "$ROOT_PART_DEV" | cut -d "/" -f 3)
+    ROOT_DEV_NAME=$(echo /sys/block/*/"${ROOT_PART_NAME}" | cut -d "/" -f 4)
+    ROOT_DEV="/dev/${ROOT_DEV_NAME}"
+
+    ROOT_DEV_SIZE=$(cat "/sys/block/${ROOT_DEV_NAME}/size")
+    DEVICE_END=$((ROOT_DEV_SIZE - 1))
+
+    PARTITION_TABLE=$(parted -m "$ROOT_DEV" unit s print | tr -d 's')
+
+    LAST_PART_NUM=$(echo "$PARTITION_TABLE" | tail -n 1 | cut -d ":" -f 1)
+
+    LAST_PART_LINE=$(echo "$PARTITION_TABLE" | grep -e "^${LAST_PART_NUM}:")
+    LAST_PART_END=$(echo "$LAST_PART_LINE" | cut -d ":" -f 3)
+
+    VFAT_PART_START=$((LAST_PART_END + 1))
+
+    NEW_PART_NUM=$((LAST_PART_NUM + 1))
+}
+
+case "$1" in
+  start)
+    log_daemon_msg "Starting create_vfat_once"
+    get_variables
+    parted -m "$ROOT_DEV" unit s mkpart primary fat32 "$VFAT_PART_START" "$DEVICE_END" &&
+    mkfs.vfat -n BADGE "$ROOT_DEV"p"$NEW_PART_NUM" &&
+    mkdir /badge &&
+    VFAT_PARTUUID=$(blkid -s PARTUUID -o value "$ROOT_DEV"p"$NEW_PART_NUM") &&
+    echo "PARTUUID=$VFAT_PARTUUID  /badge          vfat    defaults          0       3" >> /etc/fstab &&
+    mount /badge &&
+    cp -r /root/badge_default/* /badge/ &&
+    update-rc.d create_vfat_once remove &&
+    rm /etc/init.d/create_vfat_once &&
+    log_end_msg $?
+    ;;
+  *)
+    echo "Usage: $0 start" >&2
+    exit 3
+    ;;
+esac
