@@ -6,6 +6,8 @@ pip3 install RPi.GPIO
 pip3 install pyyaml
 pip3 install pygame
 setcap 'cap_net_raw,cap_net_admin+eip' $(readlink -f $(which python))
+setcap 'cap_net_raw,cap_net_admin+eip' $(readlink -f $(which python3))
+setcap 'cap_net_raw,cap_net_admin+eip' $(readlink -f $(which python3.7))
 EOF
 
 # Create badge directory with the important, static files
