@@ -3,3 +3,5 @@ python-dev
 libbluetooth-dev
 libcap2-bin
 ffmpeg
+omxplayer
+git
